@@ -4,6 +4,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_MainWindow(object):
+    selected_algo = 'logistic regression'
+    gender = 'Male'
+    embark = 'S'
+    pClass = '1'
+    siblings = '1'
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(767, 831)
@@ -48,20 +54,20 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(50, 630, 100, 33))
         self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
+        self.comboBox.addItem("Male")
+        self.comboBox.addItem("Female")
         self.comboBox_2 = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox_2.setGeometry(QtCore.QRect(330, 630, 100, 33))
         self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
+        self.comboBox_2.addItem("S")
+        self.comboBox_2.addItem("C")
+        self.comboBox_2.addItem("Q")
         self.comboBox_3 = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox_3.setGeometry(QtCore.QRect(610, 630, 100, 33))
         self.comboBox_3.setObjectName("comboBox_3")
-        self.comboBox_3.addItem("")
-        self.comboBox_3.addItem("")
-        self.comboBox_3.addItem("")
+        self.comboBox_3.addItem("1")
+        self.comboBox_3.addItem("2")
+        self.comboBox_3.addItem("3")
         self.sex_label = QtWidgets.QLabel(self.centralwidget)
         self.sex_label.setGeometry(QtCore.QRect(60, 600, 71, 17))
         font = QtGui.QFont()
@@ -107,9 +113,52 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # setting methods for radio btns
+        self.regression.toggled.connect(
+            lambda: self.selectAlgo('logistic regression'))
+        self.decision_tree.toggled.connect(
+            lambda: self.selectAlgo('decision tree'))
+        self.random_forest.toggled.connect(
+            lambda: self.selectAlgo('random forest'))
+        self.knn.toggled.connect(lambda: self.selectAlgo('knn'))
+        self.gnb.toggled.connect(lambda: self.selectAlgo('gnb'))
+        self.regression.setChecked(
+            True if self.selectAlgo == 'logistic regression' else False)
+
+        # setting methods for sex
+        self.comboBox.activated[str].connect(self.onChangeSex)
+
+        # setting methods for embark
+        self.comboBox_2.activated[str].connect(self.onChangeEmbarked)
+
+        # setting methods for
+        self.comboBox_3.activated[str].connect(self.onChangePClass)
+
+        # on Click Predict
+        self.predict_btn.clicked.connect(self.onClickPredict)
+
+    # Selected Algo Method
+    def selectAlgo(self, algo):
+        self.selected_algo = algo
+
+    # Change Sex
+    def onChangeSex(self, sex):
+        self.gender = sex
+
+    # Change Embark
+    def onChangeEmbarked(self, embark):
+        self.embark = embark
+
+    # Change Pclass
+    def onChangePClass(self, pclass):
+        self.pClass = pclass
+
+    def onClickPredict(self):
+        print(self.lineEdit.text())
+        self.lineEdit.setText("")
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -141,10 +190,9 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
-    
     app = QtWidgets.QApplication(sys.argv)
-    # MainWindow = QtWidgets.QMainWindow()
-    # ui = Ui_MainWindow()
-    # ui.setupUi(MainWindow)
-    # MainWindow.show()
-    # sys.exit(app.exec_())
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
