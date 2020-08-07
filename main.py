@@ -1,6 +1,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from algo import Algo
 
 
 class Ui_MainWindow(object):
@@ -112,6 +113,10 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
+        self.popUp = QtWidgets.QMessageBox()
+        self.popUp.setIcon(QtWidgets.QMessageBox.Critical)
+        self.result = QtWidgets.QMessageBox()
+        self.result.setIcon(QtWidgets.QMessageBox.Information)
         MainWindow.setStatusBar(self.statusbar)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -157,8 +162,32 @@ class Ui_MainWindow(object):
         self.pClass = pclass
 
     def onClickPredict(self):
-        print(self.lineEdit.text())
-        self.lineEdit.setText("")
+        if self.lineEdit.text().isdigit():
+            algorithm = Algo()
+            ans = algorithm.processing(
+                self.selected_algo, self.pClass, self.gender, self.siblings, self.embark)
+            print(ans)
+            if ans == 1:
+                self.result.setText(
+                    "The Pessenger Survived according to "+self.selected_algo+" algorithm")
+
+                self.result.exec_()
+            else:
+                self.result.setText(
+                    "The Pessenger Died according to "+self.selected_algo+" algorithm")
+
+                self.result.exec_()
+            self.lineEdit.setText("")
+        elif len(self.lineEdit.text()) == 0:
+            self.popUp.setText("Sibilings should not be empty !")
+            self.popUp.exec_()
+            self.lineEdit.setText("")
+        else:
+            self.popUp.setText("Siblings should be in numeric")
+            self.popUp.exec_()
+            self.lineEdit.setText("")
+
+        # print(self.lineEdit.text())
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
